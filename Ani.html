@@ -1,0 +1,119 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Voice and Chat Converter</title> 
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="sty.css"> 
+</head> 
+<body> 
+    <div class="wrapper">
+        </div> 
+        <div class="container"> 
+            <div class="converter" id="voiceToChat"> 
+                <div class="header"> 
+                    <h2>Voice to Text</h2> 
+                </div> 
+                <div class="input-section"> 
+                    <button class="button" onclick="startRecording()"> 
+                        <i class="ri-mic-fill"></i> Start Voice 
+                    </button>
+                    <button class="button" onclick="convertVoiceToText()"> 
+                        <i class="ri-message-2-fill"></i> Convert 
+                    </button> 
+                </div> 
+                <div class="output-section"> 
+                    <textarea id="voiceToChatOutput" placeholder="Voice to Chat Output" readonly></textarea> 
+                    <i class="ri-file-copy-line icon" onclick="copyText()"></i> 
+                    <button class="button" onclick="downloadText()"> 
+                        <i class="ri-download-line"></i> Download </button> 
+                </div> 
+            </div>
+    <script> 
+        const recognition = new webkitSpeechRecognition(); 
+        recognition.continuous = true; 
+        recognition.interimResults = true; 
+        let recognizing = false; 
+ 
+        recognition.onstart = function() { 
+            recognizing = true; 
+            document.getElementById('recordingIndicator').style.display = 'block'; 
+        }; 
+ 
+        recognition.onend = function() { 
+            recognizing = false; 
+            document.getElementById('recordingIndicator').style.display = 'none'; 
+        }; 
+ 
+        recognition.onerror = function(event) { 
+            console.error(event.error); 
+        }; 
+ 
+        recognition.onresult = function(event) { 
+            const result = event.results[event.results.length - 1]; 
+            if (result.isFinal) { 
+                const transcript = result[0].transcript; 
+                document.getElementById('voiceToChatOutput').value = transcript; 
+            } 
+        }; 
+ 
+        function startRecording() { 
+            if (recognizing) { 
+                recognition.stop(); 
+            } else { 
+                recognition.start(); 
+            } 
+        } 
+ 
+        function convertVoiceToText() { 
+            const transcript = document.getElementById('voiceToChatOutput').value; 
+            // Send transcript to server for further processing or use it as needed 
+            console.log('Transcript:', transcript); 
+        } 
+        function downloadText() { 
+            const text = document.getElementById('voiceToChatOutput').value; 
+            const blob = new Blob([text], { type: 'text/plain' }); 
+            const url = URL.createObjectURL(blob); 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = 'converted_text.txt'; 
+            document.body.appendChild(a); 
+            a.click(); 
+            URL.revokeObjectURL(url); 
+            document.body.removeChild(a); 
+        } 
+        function copyText() { 
+            const text = document.getElementById('voiceToChatOutput').value; 
+            navigator.clipboard.writeText(text).then(function() { 
+                console.log('Text copied to clipboard'); 
+            }, function(err) { 
+                console.error('Failed to copy text: ', err); 
+            }); 
+        } 
+ 
+        function showConverter(converterId) { 
+            document.getElementById('voiceToChat').style.display = 'none'; 
+            document.getElementById('chatToVoice').style.display = 'none'; 
+            document.getElementById(converterId).style.display = 'block'; 
+        } 
+ 
+        function handleFileSelect(event) { 
+            const file = event.target.files[0]; 
+            if (!file || !file.type.startsWith('audio/')) { 
+                alert('Please select an audio file.'); 
+                return; 
+            } 
+ 
+            const reader = new FileReader(); 
+            reader.onload = function(e) { 
+                const audioData = e.target.result; 
+                // Simulating conversion by setting the audio file name as output 
+                document.getElementById('fileName').innerText = 'Selected file: ' + file.name; 
+                document.getElementById('voiceToChatOutput').value = file.name; 
+            }; 
+            reader.readAsDataURL(file); 
+        } 
+    </script> 
+</body> 
+</html> 
