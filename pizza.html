@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pizza Shop Chatbot</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1590905666454-d24131c16f3e?q=80&w=868&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+      background-size: cover;
+      background-position: center;
+    }
+
+.chat-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 60px auto;
+    background: rgba(255, 255, 255, 0.199); /* Increased transparency */
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(0px); /* For Safari support */
+    backdrop-filter: blur(0px); /* Stronger blur for glass effect */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for depth */
+}
+
+    .chat-window {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background: #007bff;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background: #f1f1f1;
+      color: #333;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+      padding: 10px;
+      background: #fff;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .chat-input input:focus {
+      border-color: #007bff;
+    }
+
+    .chat-input button {
+      margin-left: 10px;
+      padding: 14px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .chat-input button:hover {
+      background: #0056b3;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-window" id="chat-window">
+    <div class="message bot-message">Hi! Welcome to Pizza Hub 🍕. How can I help you today?</div>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="user-input" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  function sendMessage() {
+    const input = document.getElementById("user-input");
+    const userText = input.value.trim();
+    if (userText === "") return;
+
+    addMessage(userText, "user-message");
+    input.value = "";
+
+    const response = getBotResponse(userText);
+    setTimeout(() => {
+      addMessage(response, "bot-message");
+    }, 500);
+  }
+
+  function addMessage(text, className) {
+    const chatWindow = document.getElementById("chat-window");
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${className}`;
+    messageDiv.innerText = text;
+    chatWindow.appendChild(messageDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  function getBotResponse(input) {
+    const msg = input.toLowerCase();
+
+    if (/hi|hello|hey/.test(msg)) {
+      return "Hi there! 👋 What can I get for you today?";
+    } else if (/order.*pizza|want.*pizza|get.*pizza/.test(msg)) {
+      return "Sure! What size and toppings would you like?";
+    } else if (/menu|types|options/.test(msg)) {
+      return "Here's our menu: Margherita, Pepperoni, Veggie, BBQ Chicken, Hawaiian.";
+    } else if (/open|hours|close|time/.test(msg)) {
+      return "We're open daily from 11 AM to 11 PM.";
+    } else if (/deliver|delivery|send|ship/.test(msg)) {
+      return "Yes, we deliver within 5 miles. May I have your address?";
+    } else if (/status|track|where.*order/.test(msg)) {
+      return "Please provide your order number and I’ll check it for you.";
+    } else if (/cancel.*order/.test(msg)) {
+      return "I can help with that. Please provide your order ID.";
+    } else if (/pay|payment|card|cash/.test(msg)) {
+      return "We accept cash, cards, and online payments.";
+    } else if (/thank/.test(msg)) {
+      return "You're welcome! 😊";
+    } else if (/bye|goodbye|see you/.test(msg)) {
+      return "Goodbye! Come back soon 🍕";
+    } else {
+      return "I'm not sure I understand. Could you rephrase?";
+    }
+  }
+</script>
+
+</body>
+</html>
